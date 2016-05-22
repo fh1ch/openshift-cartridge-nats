@@ -1,0 +1,31 @@
+Name: nats
+Cartridge-Short-Name: NATS
+Display-Name: NATS 0.8.0
+Description: NATS cartridge version 0.8.0.
+Version: '0.8.0'
+License: The MIT License (MIT)
+License-Url: https://github.com/nats-io/gnatsd/blob/master/LICENSE
+Vendor: www.nats.io
+Website: http://www.nats.io/
+Cartridge-Version: '0.1.0'
+Cartridge-Vendor: fh1ch
+Source-Url: https://github.com/fh1ch/openshift-cartridge-nats.git
+Categories:
+  - service
+  - database
+  - embedded
+Help-Topics:
+  NATS Documentation: http://www.nats.io/documentation/
+Provides:
+  - nats
+Scaling:
+  Min: 1
+  Max: 1
+Endpoints:
+  - Private-IP-Name:    IP
+    Private-Port-Name:  PORT
+    Private-Port:       4222
+    Public-Port-Name:   PROXY_PORT
+Publishes:
+  publish-db-connection-info:
+    Type: ENV:NET_TCP:db:connection-info

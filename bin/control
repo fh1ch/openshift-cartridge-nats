@@ -1,0 +1,73 @@
+#!/bin/bash
+
+
+function is_running() {
+  if [ ! -z "$(ps -ef | grep 'gnatsd' | grep -v grep)" ]; then
+    return 0
+  else
+    return 1
+  fi
+}
+
+function start() {
+  if ! is_running; then
+    nohup ${OPENSHIFT_NATS_DIR}/bin/gnatsd \
+    -a ${OPENSHIFT_NATS_IP} \
+    -p ${OPENSHIFT_NATS_PORT} \
+    -P ${OPENSHIFT_NATS_DIR}/pid/redis.pid \
+    -l ${OPENSHIFT_NATS_DIR}/logs/redis.log &
+    i=0
+    while ! is_running && [ $i -lt 60 ]; do
+      sleep 1
+      i=$(($i + 1))
+    done
+    if ! is_running; then
+      client_result "NATS failed to start"
+      exit 1
+    fi
+  fi
+}
+
+function stop() {
+  if is_running; then
+    kill "$(ps -ef | grep 'gnatsd' | grep -v grep | awk '{ print $2 }')" > /dev/null 2>&1
+    i=0
+    while is_running && [ $i -lt 60 ]; do
+      sleep 1
+      i=$(($i + 1))
+    done
+    if is_running; then
+      client_result "NATS failed to stop"
+      exit 1
+    fi
+  fi
+}
+
+function restart() {
+  stop
+  start
+}
+
+function status() {
+  if is_running; then
+    client_result "NATS is running"
+  else
+    client_result "NATS is not running"
+  fi
+}
+
+function tidy() {
+  echo
+}
+
+
+source $OPENSHIFT_CARTRIDGE_SDK_BASH
+
+case "$1" in
+  start)   start   ;;
+  stop)    stop    ;;
+  restart) restart ;;
+  status)  status  ;;
+  tidy)    tidy    ;;
+  *)
+esac

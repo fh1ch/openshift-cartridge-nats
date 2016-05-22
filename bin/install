@@ -1,0 +1,21 @@
+#!/bin/bash
+
+NATS_VERSION="v0.8.0"
+
+source $OPENSHIFT_CARTRIDGE_SDK_BASH
+
+
+curl -L -o "${OPENSHIFT_NATS_DIR}tmp.zip" "https://github.com/nats-io/gnatsd/releases/download/${NATS_VERSION}/gnatsd-${NATS_VERSION}-linux-amd64.zip"
+
+mkdir -p bin
+unzip tmp.zip -d bin
+rm ${OPENSHIFT_NATS_DIR}tmp.zip
+
+if [ -z "$OPENSHIFT_NATS_PROXY_PORT" ]; then
+  echo "nats://${OPENSHIFT_NATS_IP}:${OPENSHIFT_NATS_PORT}" > ${OPENSHIFT_NATS_DIR}/env/NATS_URL
+else
+  echo "nats://${OPENSHIFT_GEAR_DNS}:${OPENSHIFT_NATS_PROXY_PORT}" > ${OPENSHIFT_NATS_DIR}/env/NATS_URL
+fi
+
+
+client_result "NATS ${NATS_VERSION} installed - use \$NATS_URL environment variable to connect your application."
