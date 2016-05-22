@@ -11,11 +11,11 @@ function is_running() {
 
 function start() {
   if ! is_running; then
-    nohup ${OPENSHIFT_NATS_DIR}/bin/gnatsd \
+    nohup ${OPENSHIFT_DATA_DIR}.mongodb/bin/gnatsd \
     -a ${OPENSHIFT_NATS_IP} \
     -p ${OPENSHIFT_NATS_PORT} \
-    -P ${OPENSHIFT_NATS_DIR}/pid/redis.pid \
-    -l ${OPENSHIFT_NATS_DIR}/logs/redis.log &
+    -P ${OPENSHIFT_DATA_DIR}.mongodb/pid/redis.pid \
+    -l ${OPENSHIFT_DATA_DIR}.mongodb/logs/redis.log &
     i=0
     while ! is_running && [ $i -lt 60 ]; do
       sleep 1

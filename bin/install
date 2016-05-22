@@ -1,15 +1,13 @@
 #!/bin/bash
 
-NATS_VERSION="v0.8.0"
-
 source $OPENSHIFT_CARTRIDGE_SDK_BASH
 
 
-curl -L -o "${OPENSHIFT_NATS_DIR}tmp.zip" "https://github.com/nats-io/gnatsd/releases/download/${NATS_VERSION}/gnatsd-${NATS_VERSION}-linux-amd64.zip"
+curl -L -o "${OPENSHIFT_DATA_DIR}.mongodb/tmp.zip" "https://github.com/nats-io/gnatsd/releases/download/v${2}/gnatsd-v${2}-linux-amd64.zip"
 
 mkdir -p bin
-unzip tmp.zip -d bin
-rm ${OPENSHIFT_NATS_DIR}tmp.zip
+unzip ${OPENSHIFT_DATA_DIR}.mongodb/tmp.zip -d ${OPENSHIFT_DATA_DIR}.mongodb/bin
+rm ${OPENSHIFT_DATA_DIR}.mongodb/tmp.zip
 
 if [ -z "$OPENSHIFT_NATS_PROXY_PORT" ]; then
   echo "nats://${OPENSHIFT_NATS_IP}:${OPENSHIFT_NATS_PORT}" > ${OPENSHIFT_NATS_DIR}/env/NATS_URL
@@ -18,4 +16,4 @@ else
 fi
 
 
-client_result "NATS ${NATS_VERSION} installed - use \$NATS_URL environment variable to connect your application."
+client_result "NATS v${2} installed - use \$NATS_URL environment variable to connect your application."
